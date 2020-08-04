@@ -1,0 +1,14 @@
+# The twitch package used is excluded as the code is very poorly put together.
+# If you need a TwitchIRC package check out https://github.com/Adeithe/go-twitch
+twitch/
+
+# init.go is excluded to avoid showing who is blacklisted from using the bot.
+# An example file has been created in its place for people that need it.
+command/handlers/init.go
+
+# filter.go is excluded because it has some pretty explicit language in regex form.
+# An example file has been created in its place for people that need it.
+bot/twitchbot/filter.go
+
+.env
+build.sh
