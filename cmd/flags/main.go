@@ -15,23 +15,23 @@ var reader *bufio.Reader
 func main() {
 	var perms uint32
 
-	if ask("Respond to commands?") {
+	if ask("Respond to commands in users chat?") {
 		perms = bitwise.Set(perms, bitwise.RESPOND_TO_COMMANDS)
 	}
 
-	if ask("Save messages to database?") {
+	if ask("Save messages from users chat to database?") {
 		perms = bitwise.Set(perms, bitwise.RECORD_LOGS)
 	}
 
-	if ask("Blacklisted user?") {
+	if ask("Should user be allowed to use commands?") {
 		perms = bitwise.Set(perms, bitwise.BLACKLISTED)
 	}
 
-	if ask("Admin user?") {
+	if ask("Is user an administrator?") {
 		perms = bitwise.Set(perms, bitwise.ADMINISTRATOR)
 	}
 
-	if ask("Only respond when channel is offline?") {
+	if ask("Only respond to commands when user is not streaming?") {
 		perms = bitwise.Set(perms, bitwise.DONT_RESPOND_WHEN_LIVE)
 	}
 
