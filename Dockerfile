@@ -5,7 +5,7 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /go/bin/linestats .
+RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /go/bin/linestats ./cmd/bot
 
 FROM alpine
 WORKDIR /app
