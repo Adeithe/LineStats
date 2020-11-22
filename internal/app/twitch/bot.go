@@ -34,8 +34,12 @@ func ticker() {
 	for {
 		live := []string{}
 		postgres.GetTwitchChannels(func(ids []string, users []postgres.User) {
-			if users, err := twitch.GetUsers(ids...); err == nil {
-				for _, user := range users {
+			gqlUsers, err := twitch.GetUsers(ids...)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for _, user := range gqlUsers {
+				if len(user.Stream.ID) > 0 {
 					userID := fmt.Sprint(user.ID)
 					bot.LiveChannels[userID] = true
 					live = append(live, userID)

@@ -47,8 +47,12 @@ func ToChannelName(s string) string {
 
 func GetUsers(ids ...string) ([]User, error) {
 	users := QueryUsers{}
+	var gids []graphql.ID
+	for _, id := range ids {
+		gids = append(gids, id)
+	}
 	vars := map[string]interface{}{
-		"ids": []graphql.ID{ids},
+		"ids": gids,
 	}
 	if err := GraphQL.Query(context.Background(), &users, vars); err != nil {
 		return []User{}, err
