@@ -4,13 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"runtime"
+	"regexp"
 	"strings"
 
 	"LineStats/internal/pkg/bitwise"
 )
 
-var reader *bufio.Reader
+var (
+	reader *bufio.Reader
+	spaces = regexp.MustCompile("\\s+")
+)
 
 func main() {
 	var perms uint32
@@ -23,7 +26,7 @@ func main() {
 		perms = bitwise.Set(perms, bitwise.RECORD_LOGS)
 	}
 
-	if ask("Should user be allowed to use commands?") {
+	if ask("Should user be blocked from using commands?") {
 		perms = bitwise.Set(perms, bitwise.BLACKLISTED)
 	}
 
@@ -49,9 +52,5 @@ func stdin() string {
 		reader = bufio.NewReader(os.Stdin)
 	}
 	text, _ := reader.ReadString('\n')
-	lb := "\n"
-	if runtime.GOOS == "windows" {
-		lb = "\r\n"
-	}
-	return strings.Replace(text, lb, "", -1)
+	return spaces.ReplaceAllString(text, "")
 }
