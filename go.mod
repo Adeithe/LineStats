@@ -1,12 +1,12 @@
 module LineStats
 
-go 1.14
+go 1.15
 
 require (
-	github.com/bwmarrin/discordgo v0.20.3
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/Adeithe/go-twitch v0.0.0-20200906051643-b941aed3a8b9
+	github.com/bwmarrin/discordgo v0.22.0
 	github.com/joho/godotenv v1.3.0
-	github.com/lib/pq v1.4.0
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 // indirect
-	golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9 // indirect
+	github.com/lib/pq v1.8.0
+	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 )

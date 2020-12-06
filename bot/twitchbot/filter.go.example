@@ -1,5 +1,0 @@
-package twitchbot
-
-var MAX_LENGTH int = 469
-
-var BannedWords []string = []string{}
