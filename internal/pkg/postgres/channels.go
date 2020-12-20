@@ -1,6 +1,9 @@
 package postgres
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // GetTwitchChannels runs a function for every user that currently has flags. Runs in batches of 100.
 func GetTwitchChannels(cb func(ids []string, users []User)) error {
@@ -33,4 +36,22 @@ func GetTwitchChannels(cb func(ids []string, users []User)) error {
 	}
 	cb(ids, users)
 	return nil
+}
+
+func GetTotalLinesByRoomName(name string) (int64, error) {
+	user, err := GetTwitchUserByName(strings.ToLower(name))
+	if err != nil {
+		return 0, err
+	}
+	return GetTotalLinesByRoomID(user.ID)
+}
+
+func GetTotalLinesByRoomID(roomId int) (total int64, err error) {
+	stmt, err := db.Prepare(`SELECT SUM(total) as total FROM count WHERE room_id=$1`)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(roomId).Scan(&total)
+	return
 }

@@ -7,6 +7,7 @@ func Init() {
 	command.Register("lines", &Lines{})
 	command.Register("randomquote", &RandomQuote{}, "rq")
 	command.Register("scan", &Scan{})
+	command.Register("totallines", &TotalLines{})
 
 	// Discord ONLY commands
 	command.Register("logs", &Logs{})
