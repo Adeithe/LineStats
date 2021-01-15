@@ -91,8 +91,13 @@ func onMessage(msg ttv.ChatMessage) {
 		bot.Leave(channel)
 		return
 	}
-
 	fmt.Printf("[%s UTC] #%s %s: %s\n", msg.CreatedAt.Format("2006-01-02 15:04:05"), msg.Channel, msg.Sender.Username, msg.Message)
+
+	// Twitch devs are bad at their job and let things completely break sometimes so we need a failsafe in case the UserID doesn't exist.
+	if msg.Sender.UserID < 1 {
+		return
+	}
+
 	if bitwise.Has(flags, bitwise.RECORD_LOGS) {
 		if err := postgres.SaveQuote(msg); err != nil {
 			fmt.Println(err)
