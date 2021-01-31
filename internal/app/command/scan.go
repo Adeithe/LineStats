@@ -5,8 +5,6 @@ import (
 	"LineStats/internal/pkg/postgres"
 	"fmt"
 	"time"
-
-	"github.com/Adeithe/go-twitch/irc"
 )
 
 type Scan struct{}
@@ -22,9 +20,9 @@ func (handler Scan) Handle(cmd command.Data) {
 	targetChannel := cmd.Channel
 	if len(cmd.Args) > 1 {
 		query = cmd.Args[1]
-		targetUser = irc.ToChannelName(cmd.Args[0])
+		targetUser = toChannelName(cmd.Args[0])
 		if len(cmd.Args) > 2 {
-			targetChannel = irc.ToChannelName(cmd.Args[2])
+			targetChannel = toChannelName(cmd.Args[2])
 		}
 	}
 	cmd.Bot.Send(cmd.Channel, fmt.Sprintf("%s, Counting occurrences of %s for user '%s' in channel '%s'...", cmd.Sender, query, targetUser, targetChannel))

@@ -3,6 +3,7 @@ package command
 import (
 	"LineStats/internal/pkg/command"
 	"strconv"
+	"strings"
 )
 
 func Init() {
@@ -15,6 +16,10 @@ func Init() {
 	// Discord ONLY commands
 	command.Register("logs", &Logs{})
 	command.Register("namehistory", &NameHistory{}, "names", "nh")
+}
+
+func toChannelName(str string) string {
+	return strings.ToLower(strings.TrimPrefix(strings.TrimPrefix(strings.TrimSuffix(str, ","), "@"), "#"))
 }
 
 func format(n int64) string {

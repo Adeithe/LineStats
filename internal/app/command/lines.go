@@ -5,8 +5,6 @@ import (
 	"LineStats/internal/pkg/postgres"
 	"fmt"
 	"time"
-
-	"github.com/Adeithe/go-twitch/irc"
 )
 
 type Lines struct{}
@@ -17,9 +15,9 @@ func (handler Lines) Handle(cmd command.Data) {
 	targetUser := cmd.Sender
 	targetChannel := cmd.Channel
 	if len(cmd.Args) > 0 {
-		targetUser = irc.ToChannelName(cmd.Args[0])
+		targetUser = toChannelName(cmd.Args[0])
 		if len(cmd.Args) > 1 {
-			targetChannel = irc.ToChannelName(cmd.Args[1])
+			targetChannel = toChannelName(cmd.Args[1])
 		}
 	}
 	var fail bool

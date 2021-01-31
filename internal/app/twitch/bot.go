@@ -78,12 +78,12 @@ func ticker() {
 func onMessage(msg ttv.ChatMessage) {
 	channel := msg.Channel
 	//sender := msg.Sender.Username
-	if strings.HasSuffix(msg.Message, "\U000E0000") {
-		msg.Message = strings.TrimSuffix(msg.Message, "\U000E0000")
+	if strings.HasSuffix(msg.Text, "\U000E0000") {
+		msg.Text = strings.TrimSuffix(msg.Text, "\U000E0000")
 	}
-	msg.Message = strings.TrimSpace(msg.Message)
+	msg.Text = strings.TrimSpace(msg.Text)
 	if msg.IsAction {
-		msg.Message = fmt.Sprintf("/me %s", msg.Message)
+		msg.Text = fmt.Sprintf("/me %s", msg.Text)
 	}
 
 	flags, ok := bot.Channels[channel]
@@ -91,7 +91,7 @@ func onMessage(msg ttv.ChatMessage) {
 		bot.Leave(channel)
 		return
 	}
-	fmt.Printf("[%s UTC] #%s %s: %s\n", msg.CreatedAt.Format("2006-01-02 15:04:05"), msg.Channel, msg.Sender.Username, msg.Message)
+	fmt.Printf("[%s UTC] #%s %s: %s\n", msg.CreatedAt.Format("2006-01-02 15:04:05"), msg.Channel, msg.Sender.Username, msg.Text)
 
 	// Twitch devs are bad at their job and let things completely break sometimes so we need a failsafe in case the UserID doesn't exist.
 	if msg.Sender.UserID < 1 {
@@ -109,9 +109,9 @@ func onMessage(msg ttv.ChatMessage) {
 		}
 	}
 
-	if bitwise.Has(flags, bitwise.RESPOND_TO_COMMANDS) && command.HasPrefix(msg.Message) {
+	if bitwise.Has(flags, bitwise.RESPOND_TO_COMMANDS) && command.HasPrefix(msg.Text) {
 		channel := twitch.ToChannelName(msg.Channel)
-		parts := strings.Split(msg.Message, " ")
+		parts := strings.Split(msg.Text, " ")
 		cmd := strings.ToLower(command.Trim(parts[0]))
 		if !command.Exists(cmd) {
 			return

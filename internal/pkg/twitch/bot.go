@@ -17,7 +17,7 @@ type Bot struct {
 	LiveChannels map[string]bool
 
 	reader *twitch.Client
-	writer *twitch.Client
+	writer *twitch.Conn
 
 	onMessage func(msg twitch.ChatMessage)
 }
@@ -34,22 +34,22 @@ func New(onMessage func(msg twitch.ChatMessage)) *Bot {
 
 func (bot *Bot) Start(username string, token string) {
 	bot.reader = twitch.New()
-	bot.reader.OnMessage(func(msg twitch.ChatMessage) {
+	bot.reader.OnShardMessage(func(shardID int, msg twitch.ChatMessage) {
 		prometheus.TwitchMessagesIn.Inc()
 		bot.onMessage(msg)
 	})
-	bot.reader.OnDisconnect(func() {
+	bot.reader.OnShardDisconnect(func(shardID int) {
 		fmt.Println("reader: disconnected from twitch irc")
-		if err := bot.reader.Connect(); err != nil {
+		shard, err := bot.reader.GetShard(shardID)
+		if err != nil {
+			panic("reader: failed to get disconnected shard")
+		}
+		if err := shard.Connect(); err != nil {
 			panic("reader: failed to reconnect to twitch irc")
 		}
 	})
 
-	if err := bot.reader.Connect(); err != nil {
-		panic("reader: failed to connect to twitch irc")
-	}
-
-	bot.writer = twitch.New()
+	bot.writer = &twitch.Conn{}
 	bot.writer.SetLogin(username, token)
 	bot.writer.OnDisconnect(func() {
 		fmt.Println("writer: disconnected from twitch irc")

@@ -76,7 +76,7 @@ func handlePyramids(msg irc.ChatMessage) {
 		tiers = 0
 		count = 0
 	}
-	i := len(strings.Split(spaces.ReplaceAllString(msg.Message, " "), " "))
+	i := len(strings.Split(spaces.ReplaceAllString(msg.Text, " "), " "))
 	count++
 
 	if !msg.Sender.IsModerator && count > 3 && tiers > 2 && tiers-1 == i {

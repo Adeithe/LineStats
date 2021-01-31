@@ -5,8 +5,6 @@ import (
 	"LineStats/internal/pkg/postgres"
 	"database/sql"
 	"fmt"
-
-	"github.com/Adeithe/go-twitch/irc"
 )
 
 type LastSeen struct{}
@@ -17,10 +15,10 @@ func (handler LastSeen) Handle(cmd command.Data) {
 	if len(cmd.Args) < 1 {
 		return
 	}
-	targetUser := irc.ToChannelName(cmd.Args[0])
+	targetUser := toChannelName(cmd.Args[0])
 	targetChannel := cmd.Channel
 	if len(cmd.Args) > 1 {
-		targetChannel = irc.ToChannelName(cmd.Args[1])
+		targetChannel = toChannelName(cmd.Args[1])
 	}
 	channel, err := postgres.GetTwitchUserByName(targetChannel)
 	if err != nil {
