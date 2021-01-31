@@ -10,6 +10,7 @@ const (
 	ADMINISTRATOR
 
 	DONT_RESPOND_WHEN_LIVE
+	BLOCK_PYRAMIDS
 )
 
 func ShouldJoinChannel(n uint32) bool {

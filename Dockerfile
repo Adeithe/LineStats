@@ -10,4 +10,5 @@ RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /go/bin/linestats ./cmd/bot
 FROM alpine
 WORKDIR /app
 COPY --from=builder /go/bin/linestats ./linestats
+EXPOSE 9091
 ENTRYPOINT ["./linestats"]

@@ -109,7 +109,7 @@ func onMessage(msg ttv.ChatMessage) {
 		}
 	}
 
-	if command.HasPrefix(msg.Message) && bitwise.Has(flags, bitwise.RESPOND_TO_COMMANDS) {
+	if bitwise.Has(flags, bitwise.RESPOND_TO_COMMANDS) && command.HasPrefix(msg.Message) {
 		channel := twitch.ToChannelName(msg.Channel)
 		parts := strings.Split(msg.Message, " ")
 		cmd := strings.ToLower(command.Trim(parts[0]))
@@ -124,7 +124,7 @@ func onMessage(msg ttv.ChatMessage) {
 			fmt.Printf("Channel '%s' is live. Skipping command as requested by the streamer...\n", channel)
 			return
 		}
-		user, err := postgres.GetTwitchUserByID(msg.Sender.UserID)
+		user, err := postgres.GetTwitchUserByID(int64(msg.Sender.UserID))
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -134,5 +134,10 @@ func onMessage(msg ttv.ChatMessage) {
 			return
 		}
 		go command.Execute(command.Twitch, bot, channel, msg.Sender.Username, cmd, parts[1:]...)
+	} else if bitwise.Has(flags, bitwise.BLOCK_PYRAMIDS) {
+		if bitwise.Has(flags, bitwise.DONT_RESPOND_WHEN_LIVE) && bot.LiveChannels[fmt.Sprint(msg.ChannelID)] {
+			return
+		}
+		handlePyramids(msg)
 	}
 }

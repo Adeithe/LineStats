@@ -16,8 +16,9 @@ type Bot struct {
 
 var _ command.IBot = &Bot{}
 
-func New(onMessage func(*discordgo.MessageCreate)) *Bot {
-	return &Bot{onMessage: onMessage}
+func New(onMessage func(*discordgo.MessageCreate)) (bot *Bot) {
+	bot = &Bot{onMessage: onMessage}
+	return
 }
 
 func (bot *Bot) SetLogin(clientId string, token string) {
@@ -31,9 +32,7 @@ func (bot *Bot) Start() error {
 		return err
 	}
 	bot.session = session
-	bot.session.AddHandler(func(session *discordgo.Session, event *discordgo.MessageCreate) {
-		bot.onMessage(event)
-	})
+	bot.session.AddHandler(func(session *discordgo.Session, event *discordgo.MessageCreate) { bot.onMessage(event) })
 	bot.session.AddHandlerOnce(func(session *discordgo.Session, event discordgo.Disconnect) {
 		panic("discord: disconnected from session")
 	})
@@ -46,7 +45,7 @@ func (bot *Bot) Start() error {
 func (bot *Bot) Send(channel string, message string) (command.IMessage, error) {
 	msg, err := bot.session.ChannelMessageSend(channel, message)
 	if err != nil {
-		return Message{}, err
+		return &Message{}, err
 	}
-	return Message{bot, msg}, nil
+	return &Message{bot, msg}, nil
 }

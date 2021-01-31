@@ -30,3 +30,13 @@ func Ping() error {
 func GetDatabase() *sql.DB {
 	return db
 }
+
+func GetTotalLinesStored() (total int64, err error) {
+	stmt, err := db.Prepare(`SELECT SUM(total) as total FROM count`)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow().Scan(&total)
+	return
+}

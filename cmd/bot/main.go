@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +12,7 @@ import (
 	"LineStats/internal/app/discord"
 	"LineStats/internal/app/twitch"
 	"LineStats/internal/pkg/postgres"
+	"LineStats/internal/pkg/prometheus"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -18,6 +20,7 @@ import (
 var sc chan os.Signal
 
 func main() {
+	rand.Seed(time.Now().Unix())
 	sc = make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 
@@ -29,6 +32,8 @@ func main() {
 		panic(err)
 	}
 	defer postgres.Close()
+
+	go prometheus.Init()
 
 	command.Init()
 	twitch.New()

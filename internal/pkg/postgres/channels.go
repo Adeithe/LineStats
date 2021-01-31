@@ -15,7 +15,7 @@ func GetTwitchChannels(cb func(ids []string, users []User)) error {
 	ids := []string{}
 	users := []User{}
 	for rows.Next() {
-		var id int
+		var id int64
 		var flags uint32
 		if err := rows.Scan(&id, &flags); err != nil {
 			fmt.Println(err)
@@ -46,7 +46,7 @@ func GetTotalLinesByRoomName(name string) (int64, error) {
 	return GetTotalLinesByRoomID(user.ID)
 }
 
-func GetTotalLinesByRoomID(roomId int) (total int64, err error) {
+func GetTotalLinesByRoomID(roomId int64) (total int64, err error) {
 	stmt, err := db.Prepare(`SELECT SUM(total) as total FROM count WHERE room_id=$1`)
 	if err != nil {
 		return

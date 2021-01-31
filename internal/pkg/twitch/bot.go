@@ -3,6 +3,7 @@ package twitch
 import (
 	"LineStats/internal/pkg/bitwise"
 	"LineStats/internal/pkg/command"
+	"LineStats/internal/pkg/prometheus"
 	"fmt"
 
 	twitch "github.com/Adeithe/go-twitch/irc"
@@ -33,7 +34,10 @@ func New(onMessage func(msg twitch.ChatMessage)) *Bot {
 
 func (bot *Bot) Start(username string, token string) {
 	bot.reader = twitch.New()
-	bot.reader.OnMessage(bot.onMessage)
+	bot.reader.OnMessage(func(msg twitch.ChatMessage) {
+		prometheus.TwitchMessagesIn.Inc()
+		bot.onMessage(msg)
+	})
 	bot.reader.OnDisconnect(func() {
 		fmt.Println("reader: disconnected from twitch irc")
 		if err := bot.reader.Connect(); err != nil {
@@ -77,5 +81,6 @@ func (bot *Bot) InChannel(channel string) bool {
 
 func (bot *Bot) Send(channel string, message string) (command.IMessage, error) {
 	bot.writer.Say(channel, message)
-	return Message{bot}, nil
+	prometheus.TwitchMessagesOut.Inc()
+	return &Message{bot}, nil
 }

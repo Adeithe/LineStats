@@ -56,6 +56,6 @@ func (handler Lines) Handle(cmd command.Data) {
 	}
 	percent := (float64(lines.Unique) / float64(lines.Total)) * 100
 	fmt.Printf("Lines> #%s %s: %d lines (%.2f%% unique) - Most: %s (%d lines)\n", channel.Name, targetUser, lines.Total, percent, lines.MostDate, lines.MostCount)
-	line := fmt.Sprintf("%s, User '%s' has %d lines (%.2f%% unique) in channel '%s' with their most lines in %s (%d lines)", cmd.Sender, targetUser, lines.Total, percent, targetChannel, lines.MostDate, lines.MostCount)
+	line := fmt.Sprintf("%s, User '%s' has %s lines (%.2f%% unique) in channel '%s' with their most lines in %s (%s lines)", cmd.Sender, targetUser, format(lines.Total), percent, targetChannel, lines.MostDate, format(int64(lines.MostCount)))
 	cmd.Bot.Send(cmd.Channel, line)
 }

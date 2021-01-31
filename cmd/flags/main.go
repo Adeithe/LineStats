@@ -38,6 +38,10 @@ func main() {
 		perms = bitwise.Set(perms, bitwise.DONT_RESPOND_WHEN_LIVE)
 	}
 
+	if ask("Block users from typing a pyramid in users chat?") {
+		perms = bitwise.Set(perms, bitwise.BLOCK_PYRAMIDS)
+	}
+
 	fmt.Printf("\nPermissions: %v", perms)
 }
 

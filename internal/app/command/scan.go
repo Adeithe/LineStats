@@ -48,7 +48,7 @@ func (handler Scan) Handle(cmd command.Data) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		line = fmt.Sprintf("%s, User '%s' has said %s %d times in channel '%s'", cmd.Sender, targetUser, query, count, targetChannel)
+		line = fmt.Sprintf("%s, User '%s' has said %s %s times in channel '%s'", cmd.Sender, targetUser, query, format(count), targetChannel)
 	}
 	duration := start.Sub(time.Now())
 	if duration < time.Second*3 {

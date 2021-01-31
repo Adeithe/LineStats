@@ -1,11 +1,16 @@
 package command
 
+import (
+	"time"
+)
+
 type Data struct {
-	Bot      IBot
-	Sender   string
-	Channel  string
-	Args     []string
-	Executor Executor
+	Bot       IBot
+	Sender    string
+	Channel   string
+	Args      []string
+	Executor  Executor
+	CreatedAt time.Time
 }
 
 type IBot interface {

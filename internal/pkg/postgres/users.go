@@ -27,7 +27,7 @@ func SaveUser(user twitch.ChatSender) error {
 	return err
 }
 
-func GetTwitchUserByID(userId int) (User, error) {
+func GetTwitchUserByID(userId int64) (User, error) {
 	user := User{ID: -1}
 	stmt, err := db.Prepare(`SELECT id, name, created_at FROM users WHERE id=$1 ORDER BY created_at DESC LIMIT 1`)
 	if err != nil {
@@ -58,7 +58,7 @@ func GetTwitchUserByName(login string) (User, error) {
 	return user, nil
 }
 
-func GetLastSeenByUserID(roomId int, userId int) (string, error) {
+func GetLastSeenByUserID(roomId int64, userId int64) (string, error) {
 	var lastSeen string
 	stmt, err := db.Prepare(`SELECT TO_CHAR(updated_at, 'Day Month DD YYYY HH24:MI:SS') FROM count WHERE room_id=$1 AND user_id=$2`)
 	if err != nil {
@@ -69,7 +69,7 @@ func GetLastSeenByUserID(roomId int, userId int) (string, error) {
 	return spaces.ReplaceAllString(lastSeen, " "), err
 }
 
-func GetLinesByUserID(roomId int, userId int) (Lines, error) {
+func GetLinesByUserID(roomId int64, userId int64) (Lines, error) {
 	lines := &Lines{}
 	count, err := db.Prepare(`SELECT room_id, user_id, total, created_at, updated_at FROM count WHERE room_id=$1 AND user_id=$2`)
 	if err != nil {
@@ -99,7 +99,7 @@ func GetLinesByUserID(roomId int, userId int) (Lines, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var date string
-		var count int
+		var count int64
 		if err := rows.Scan(&date, &count); err != nil {
 			break
 		}
@@ -111,8 +111,8 @@ func GetLinesByUserID(roomId int, userId int) (Lines, error) {
 	return *lines, nil
 }
 
-func ScanMessagesByUserID(roomId int, userId int, query string) (int, error) {
-	var count int
+func ScanMessagesByUserID(roomId int64, userId int64, query string) (int64, error) {
+	var count int64
 	stmt, err := db.Prepare(`SELECT SUM((length(message) - length(replace(message, $3, '')))::int / length($3)) AS count FROM messages WHERE room_id=$1 AND user_id=$2`)
 	if err != nil {
 		return 0, err
@@ -122,7 +122,7 @@ func ScanMessagesByUserID(roomId int, userId int, query string) (int, error) {
 	return count, err
 }
 
-func GetQuoteByUserID(roomId int, userId int) (Quote, error) {
+func GetQuoteByUserID(roomId int64, userId int64) (Quote, error) {
 	quote := &Quote{}
 	stmt, err := db.Prepare(`
 		SELECT room_id, user_id, username, message, created_at FROM messages WHERE room_id=$1 AND user_id=$2 
@@ -140,7 +140,7 @@ func GetQuoteByUserID(roomId int, userId int) (Quote, error) {
 	return *quote, nil
 }
 
-func _GetFlagsForUserByID(userType string, userID int) (uint32, error) {
+func _GetFlagsForUserByID(userType string, userID int64) (uint32, error) {
 	userType = strings.ToLower(userType)
 	stmt, err := db.Prepare(`SELECT flags FROM permissions WHERE user_type=$1 AND user_id=$2`)
 	if err != nil {

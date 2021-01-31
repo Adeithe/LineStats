@@ -2,6 +2,7 @@ package command
 
 import (
 	"strings"
+	"time"
 )
 
 type Manager struct {
@@ -54,15 +55,16 @@ func Register(cmd string, executor IHandler, aliases ...string) {
 }
 
 func Execute(exec Executor, bot IBot, channel string, sender string, cmd string, args ...string) {
+	command := Data{
+		Bot:       bot,
+		Sender:    sender,
+		Channel:   channel,
+		Args:      args,
+		Executor:  exec,
+		CreatedAt: time.Now(),
+	}
 	if executor, ok := mgr.cmds[cmd]; ok {
 		mgr.executing[channel] = true
-		command := Data{
-			Bot:      bot,
-			Sender:   sender,
-			Channel:  channel,
-			Args:     args,
-			Executor: exec,
-		}
 		executor(command)
 		delete(mgr.executing, channel)
 	}
