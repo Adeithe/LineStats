@@ -4,7 +4,6 @@ import (
 	"LineStats/internal/pkg/bitwise"
 	"LineStats/internal/pkg/command"
 	"LineStats/internal/pkg/prometheus"
-	"fmt"
 
 	twitch "github.com/Adeithe/go-twitch/irc"
 )
@@ -39,23 +38,13 @@ func (bot *Bot) Start(username string, token string) {
 		bot.onMessage(msg)
 	})
 	bot.reader.OnShardDisconnect(func(shardID int) {
-		fmt.Println("reader: disconnected from twitch irc")
-		shard, err := bot.reader.GetShard(shardID)
-		if err != nil {
-			panic("reader: failed to get disconnected shard")
-		}
-		if err := shard.Connect(); err != nil {
-			panic("reader: failed to reconnect to twitch irc")
-		}
+		panic("reader: disconnected from twitch irc")
 	})
 
 	bot.writer = &twitch.Conn{}
 	bot.writer.SetLogin(username, token)
 	bot.writer.OnDisconnect(func() {
-		fmt.Println("writer: disconnected from twitch irc")
-		if err := bot.writer.Connect(); err != nil {
-			panic("writer: failed to reconnect to twitch irc")
-		}
+		panic("writer: disconnected from twitch irc")
 	})
 	if err := bot.writer.Connect(); err != nil {
 		panic("writer: failed to connect to twitch irc")
