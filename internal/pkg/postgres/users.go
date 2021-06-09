@@ -13,7 +13,7 @@ func SaveQuote(msg twitch.ChatMessage) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(msg.ChannelID, msg.Sender.UserID, msg.Sender.Username, msg.Text, msg.CreatedAt.UTC())
+	_, err = stmt.Exec(msg.ChannelID, msg.Sender.ID, msg.Sender.Username, msg.Text, msg.CreatedAt.UTC())
 	return err
 }
 
@@ -23,7 +23,7 @@ func SaveUser(user twitch.ChatSender) error {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(user.UserID, user.Username)
+	_, err = stmt.Exec(user.ID, user.Username)
 	return err
 }
 

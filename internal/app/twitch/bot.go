@@ -94,7 +94,7 @@ func onMessage(msg ttv.ChatMessage) {
 	fmt.Printf("[%s UTC] #%s %s: %s\n", msg.CreatedAt.Format("2006-01-02 15:04:05"), msg.Channel, msg.Sender.Username, msg.Text)
 
 	// Twitch devs are bad at their job and let things completely break sometimes so we need a failsafe in case the UserID doesn't exist.
-	if msg.Sender.UserID < 1 {
+	if msg.Sender.ID < 1 {
 		return
 	}
 
@@ -124,13 +124,13 @@ func onMessage(msg ttv.ChatMessage) {
 			fmt.Printf("Channel '%s' is live. Skipping command as requested by the streamer...\n", channel)
 			return
 		}
-		user, err := postgres.GetTwitchUserByID(int64(msg.Sender.UserID))
+		user, err := postgres.GetTwitchUserByID(msg.Sender.ID)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		if bitwise.Has(user.Flags, bitwise.BLACKLISTED) {
-			fmt.Printf("User '%s' (ID: %d) is blacklisted from using the bot. Skipping...\n", msg.Sender.Username, msg.Sender.UserID)
+			fmt.Printf("User '%s' (ID: %d) is blacklisted from using the bot. Skipping...\n", msg.Sender.Username, msg.Sender.ID)
 			return
 		}
 		go command.Execute(command.Twitch, bot, channel, msg.Sender.Username, cmd, parts[1:]...)

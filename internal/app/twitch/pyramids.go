@@ -46,20 +46,20 @@ var (
 		"sodaG Fact #32: 90% of male giraffes mate with other males. KappaPride Clap",
 	}
 
-	msgCount   map[int]int    = make(map[int]int)
-	lastFact   map[int]string = make(map[int]string)
-	lastSender map[int]int    = make(map[int]int)
-	tiers      map[int]int    = make(map[int]int)
+	msgCount   map[int64]int    = make(map[int64]int)
+	lastFact   map[int64]string = make(map[int64]string)
+	lastSender map[int64]int64  = make(map[int64]int64)
+	tiers      map[int64]int    = make(map[int64]int)
 	mx         sync.Mutex
 )
 
-func getPyramidData(roomID int) (string, int, int, int) {
+func getPyramidData(roomID int64) (string, int64, int, int) {
 	mx.Lock()
 	defer mx.Unlock()
 	return lastFact[roomID], lastSender[roomID], tiers[roomID], msgCount[roomID]
 }
 
-func setPyramidData(roomID int, fact string, sender, tierCount, count int) {
+func setPyramidData(roomID int64, fact string, sender int64, tierCount, count int) {
 	mx.Lock()
 	defer mx.Unlock()
 	lastFact[roomID] = fact
@@ -71,8 +71,8 @@ func setPyramidData(roomID int, fact string, sender, tierCount, count int) {
 // This is a terrible implementation. I'll rewrite later.
 func handlePyramids(msg irc.ChatMessage) {
 	fact, lastSender, tiers, count := getPyramidData(msg.ChannelID)
-	if lastSender != msg.Sender.UserID {
-		lastSender = msg.Sender.UserID
+	if lastSender != msg.Sender.ID {
+		lastSender = msg.Sender.ID
 		tiers = 0
 		count = 0
 	}
