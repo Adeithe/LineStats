@@ -1,0 +1,59 @@
+version: 2.1
+orbs:
+  docker: circleci/docker@1.5.0
+
+jobs:
+  build-and-push:
+    executor: docker/machine
+    steps:
+      - checkout
+      - run:
+          name: Remove old docker install
+          command: |
+            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+            $SUDO systemctl stop docker.service
+            $SUDO apt remove docker-ce docker-ce-cli containerd.io
+      - docker/install-docker:
+          install-dir: /usr/bin
+      - run:
+          name: Restart docker daemon with experimental features
+          command: |
+            sudo bash -c 'echo "{\"experimental\":true}" > /etc/docker/daemon.json'
+            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+            $SUDO systemctl unmask docker.service
+            $SUDO systemctl unmask docker.socket
+            $SUDO systemctl start docker.service
+      - run:
+          name: Install buildx
+          command: |
+            BUILDX_VERSION="v0.4.1"
+
+            curl -sSLo docker-buildx "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64"
+            chmod a+x docker-buildx
+            mkdir -p ~/.docker/cli-plugins
+            mv docker-buildx ~/.docker/cli-plugins/docker-buildx
+
+            docker version
+            docker buildx install
+      - docker/check:
+          registry: $DOCKER_REGISTRY
+      - run:
+          name: Create buildx profile
+          command: |
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker buildx create --use --name mybuilder
+      - docker/build:
+          registry: $DOCKER_REGISTRY
+          image: adeithe/linestats
+          tag: latest
+          extra_build_args: --platform linux/amd64,linux/arm64,linux/arm/v7 --push
+
+workflows:
+  build:
+    jobs:
+      - build-and-push:
+          filters:
+            branches:
+              only:
+                - master
+          context: Docker
