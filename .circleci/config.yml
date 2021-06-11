@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Install buildx
           command: |
-            BUILDX_VERSION="v0.4.1"
+            BUILDX_VERSION="v0.5.1"
 
             curl -sSLo docker-buildx "https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64"
             chmod a+x docker-buildx
