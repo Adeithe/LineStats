@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ascii  *regexp.Regexp = regexp.MustCompile("\\w+|\\s+")
+	ascii  *regexp.Regexp = regexp.MustCompile("\\W+")
 	spaces *regexp.Regexp = regexp.MustCompile("\\s+")
 	facts  []string       = []string{
 		"sodaG Fact #1: Giraffes are really tall.",
@@ -83,7 +83,8 @@ func handlePyramids(msg irc.ChatMessage) {
 	i := len(strings.Split(text, " "))
 	count++
 
-	if !msg.Sender.IsModerator && count > 3 && tiers > 2 && tiers-1 == i {
+	trusted := msg.Sender.IsVIP || msg.Sender.IsModerator || msg.Sender.IsBroadcaster
+	if !trusted && count > 3 && tiers > 2 && tiers-1 == i {
 		fact = getGiraffeFact(fact)
 		bot.Send(msg.Channel, fact)
 	}
