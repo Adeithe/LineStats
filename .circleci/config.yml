@@ -46,7 +46,7 @@ jobs:
           registry: $DOCKER_REGISTRY
           image: adeithe/linestats
           tag: latest
-          extra_build_args: --platform linux/amd64,linux/arm64,linux/arm/v7 --push
+          extra_build_args: --platform linux/amd64,linux/arm/v7 --push
 
 workflows:
   build:
